@@ -48,17 +48,10 @@ func (s *Service) Register(email, password, firstName, lastName string) (*models
 	strength := zxcvbn.PasswordStrength(password, userInputs)
 
 	if strength.Score < minPasswordScore {
-		feedback := "Password is too weak."
-		if len(strength.Feedback.Suggestions) > 0 {
-			feedback += " Suggestions: " + strings.Join(strength.Feedback.Suggestions, "; ")
-		}
-		if strength.Feedback.Warning != "" {
-			feedback = strength.Feedback.Warning + ". " + feedback
-		}
 		return nil, &ValidationError{
 			Field:   "password",
 			Code:    "PASSWORD_TOO_WEAK",
-			Message: feedback,
+			Message: fmt.Sprintf("Password is too weak (score: %d/%d). Please use a stronger password with a mix of characters.", strength.Score, 4),
 		}
 	}
 
@@ -233,17 +226,10 @@ func (s *Service) ResetPassword(rawToken, newPassword string) error {
 	strength := zxcvbn.PasswordStrength(newPassword, userInputs)
 
 	if strength.Score < minPasswordScore {
-		feedback := "Password is too weak."
-		if len(strength.Feedback.Suggestions) > 0 {
-			feedback += " Suggestions: " + strings.Join(strength.Feedback.Suggestions, "; ")
-		}
-		if strength.Feedback.Warning != "" {
-			feedback = strength.Feedback.Warning + ". " + feedback
-		}
 		return &ValidationError{
 			Field:   "new_password",
 			Code:    "PASSWORD_TOO_WEAK",
-			Message: feedback,
+			Message: fmt.Sprintf("Password is too weak (score: %d/%d). Please use a stronger password with a mix of characters.", strength.Score, 4),
 		}
 	}
 
