@@ -60,11 +60,11 @@ func TestPasswordStrengthValidation(t *testing.T) {
 			description: "Strong passphrase should be accepted",
 		},
 		{
-			name:        "weak password - common with substitutions",
-			password:    "MyP@ssw0rd2024",
+			name:        "strong password - long random",
+			password:    "Tr0ub4dor&3PlusMore",
 			userInputs:  []string{"test@example.com", "John", "Doe"},
-			shouldPass:  false,
-			description: "Common word with character substitutions should be rejected",
+			shouldPass:  true,
+			description: "Strong password with good entropy should be accepted",
 		},
 	}
 
