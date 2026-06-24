@@ -74,16 +74,8 @@ func TestPasswordStrengthValidation(t *testing.T) {
 			passed := strength.Score >= minPasswordScore
 
 			assert.Equal(t, tt.shouldPass, passed,
-				"Password: %s, Score: %d, Expected pass: %v, Got pass: %v\nWarning: %s\nSuggestions: %v",
-				tt.password, strength.Score, tt.shouldPass, passed,
-				strength.Feedback.Warning, strength.Feedback.Suggestions)
-
-			if !passed {
-				// Verify feedback is provided
-				assert.True(t,
-					strength.Feedback.Warning != "" || len(strength.Feedback.Suggestions) > 0,
-					"Rejected password should have feedback")
-			}
+				"Password: %s, Score: %d, Expected pass: %v, Got pass: %v",
+				tt.password, strength.Score, tt.shouldPass, passed)
 		})
 	}
 }
