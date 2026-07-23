@@ -99,3 +99,11 @@ func TooManyRequests(c *gin.Context) {
 		Error:   &APIError{Code: "RATE_LIMIT_EXCEEDED", Message: "too many requests, please slow down"},
 	})
 }
+
+// PayloadTooLarge sends a 413 error response.
+func PayloadTooLarge(c *gin.Context) {
+	c.JSON(http.StatusRequestEntityTooLarge, Response{
+		Success: false,
+		Error:   &APIError{Code: "PAYLOAD_TOO_LARGE", Message: "request body exceeds maximum allowed size"},
+	})
+}
