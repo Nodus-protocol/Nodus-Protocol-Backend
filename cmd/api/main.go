@@ -73,6 +73,7 @@ func main() {
 		middleware.CORS(cfg),
 		middleware.RequestLogger(log),
 		middleware.RateLimiter(rateLimiterStore, 300),
+		middleware.BodyLimit(cfg.Server.MaxBodySize),
 	)
 
 	router.GET("/health", func(c *gin.Context) {

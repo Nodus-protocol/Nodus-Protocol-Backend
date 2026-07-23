@@ -31,6 +31,7 @@ type ServerConfig struct {
 	ReadTimeout  time.Duration `mapstructure:"SERVER_READ_TIMEOUT"`
 	WriteTimeout time.Duration `mapstructure:"SERVER_WRITE_TIMEOUT"`
 	IdleTimeout  time.Duration `mapstructure:"SERVER_IDLE_TIMEOUT"`
+	MaxBodySize  int64         `mapstructure:"SERVER_MAX_BODY_SIZE"`
 }
 
 type DatabaseConfig struct {
@@ -120,6 +121,7 @@ func Load() (*Config, error) {
 	v.SetDefault("SERVER_READ_TIMEOUT", 10*time.Second)
 	v.SetDefault("SERVER_WRITE_TIMEOUT", 30*time.Second)
 	v.SetDefault("SERVER_IDLE_TIMEOUT", 120*time.Second)
+	v.SetDefault("SERVER_MAX_BODY_SIZE", 1<<20) // 1 MB
 	v.SetDefault("DB_HOST", "localhost")
 	v.SetDefault("DB_PORT", "5432")
 	v.SetDefault("DB_SSLMODE", "disable")
@@ -153,7 +155,7 @@ func Load() (*Config, error) {
 	cfg := &Config{}
 	if err := v.Unmarshal(cfg); err != nil {
 		cfg.App = AppConfig{Name: v.GetString("APP_NAME"), Env: v.GetString("APP_ENV"), FrontendURL: v.GetString("FRONTEND_URL")}
-		cfg.Server = ServerConfig{Port: v.GetString("SERVER_PORT"), ReadTimeout: v.GetDuration("SERVER_READ_TIMEOUT"), WriteTimeout: v.GetDuration("SERVER_WRITE_TIMEOUT"), IdleTimeout: v.GetDuration("SERVER_IDLE_TIMEOUT")}
+		cfg.Server = ServerConfig{Port: v.GetString("SERVER_PORT"), ReadTimeout: v.GetDuration("SERVER_READ_TIMEOUT"), WriteTimeout: v.GetDuration("SERVER_WRITE_TIMEOUT"), IdleTimeout: v.GetDuration("SERVER_IDLE_TIMEOUT"), MaxBodySize: v.GetInt64("SERVER_MAX_BODY_SIZE")}
 		cfg.Database = DatabaseConfig{Host: v.GetString("DB_HOST"), Port: v.GetString("DB_PORT"), User: v.GetString("DB_USER"), Password: v.GetString("DB_PASSWORD"), Name: v.GetString("DB_NAME"), SSLMode: v.GetString("DB_SSLMODE")}
 		cfg.Redis = RedisConfig{Host: v.GetString("REDIS_HOST"), Port: v.GetString("REDIS_PORT"), Password: v.GetString("REDIS_PASSWORD"), DB: v.GetInt("REDIS_DB")}
 		cfg.JWT = JWTConfig{PrivateKeyPath: v.GetString("JWT_PRIVATE_KEY_PATH"), PublicKeyPath: v.GetString("JWT_PUBLIC_KEY_PATH"), AccessTokenTTL: v.GetDuration("JWT_ACCESS_TTL"), RefreshTokenTTL: v.GetDuration("JWT_REFRESH_TTL"), EmailTokenTTL: v.GetDuration("JWT_EMAIL_TTL"), PasswordResetTTL: v.GetDuration("JWT_PASSWORD_RESET_TTL")}
